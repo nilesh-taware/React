@@ -1,0 +1,35 @@
+const EventEmitter = require('events');
+const myEmitter = new EventEmitter();
+
+// Listener for a general event
+myEmitter.on('orderPlaced', (orderId) => {
+  console.log(`Order received. Order ID: ${orderId}`);
+});
+
+// Listener for multiple events
+myEmitter.on('orderShipped', (orderId, shipmentId) => {
+  console.log(`Order ${orderId} has been shipped with shipment ID ${shipmentId}`);
+});
+
+// One-time event listener - triggers only once
+myEmitter.once('orderDelivered', (orderId) => {
+  console.log(`Order ${orderId} delivered to customer.`);
+});
+
+// Emit events with data
+myEmitter.emit('orderPlaced', 12345);
+myEmitter.emit('orderShipped', 12345, 'SHIP789');
+myEmitter.emit('orderDelivered', 12345);
+myEmitter.emit('orderDelivered', 12345);  // This will NOT trigger listener again
+
+// Removing a specific listener
+function logOrderCancel(orderId) {
+  console.log(`Order ${orderId} has been cancelled.`);
+}
+
+// Register and then remove listener for 'orderCancelled'
+myEmitter.on('orderCancelled', logOrderCancel);
+myEmitter.emit('orderCancelled', 12345);
+
+myEmitter.off('orderCancelled', logOrderCancel);
+myEmitter.emit('orderCancelled', 12345); // No output as listener removed
